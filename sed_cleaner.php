@@ -72,52 +72,17 @@ if( @txpinterface === 'admin' )
 # --- BEGIN PLUGIN HELP ---
 <div id="sed_cleaner_help">
 
-h1(#top). SED Section Fields Help.
+h1(#top). SED Cleaner.
 
 Introduces section-specific overrides for admin interface fields.
 
-h2. Upgrading from version 2
-
-If you are updating for the first time from v2 to v3 (or higher) of this plugin then you
-will need to upgrade the section_field preferences by following <a href="/textpattern/index.php?sed_resources=update_data_format" rel="nofollow">this link to upgrade the data.</a>
-
-If the link doesn't work for you and you are running on a localhost server configuration, you can *try* typing the following into your browser to try to force an update...
-http://localhost/your-site-name-here/textpattern/index.php?sed_resources=update_data_format
-
-Change 'your-site-name-here' to the name of your local site.
-
+Kills site content. Only enable this on **NEW** sites!
 
 h2(#changelog). Change Log
 
-h3. v0.4
-
-* Adds new layout for "Presentation > Section" tab. You can turn the new layout on and off from the "Admin > Prefs > Advanced" page. Look for the *sed_sf* preferences towards the bottom of the screen.
-* Adds a "live" filter to the section index on the new section tab. *NB* This will only appear once the limit specified in "Admin > Prefs > Advanced > sed_sf" is exceeded.
-* Bugfix: Error console/IE errors due to a text/xml header being sent for text/plain data.
-* Bugfix: PHP notices (treated as errors in some setups) stop the section tab working.
-
-h3. v0.3
-
-* Adds a "Show all" and "Hide all" link under custom field lists to allow all of them to be turned on or off with one click (don't forget to save your change!)
-* Now allows sections to be marked as 'static' for exclusion from the write tab's section select list *for non-publishers*.
-* Depends upon sed_plugin_lib for MLP support and compact storage format (thanks Dale.)
-* Bugfix: Removed limit of 20 custom fields with glz_custom_fields (thanks Dale.)
-* Bugfix: Creating new sections now shows the custom controls.
-* Bugfix: Renaming a section now preserves existing sed_sf data.
-* Using jQuery -- should now work on IE.
-
-h3. v0.2
-
-* Knows how to hide glz_custom_fields too.
-
 h3. v0.1
 
-* Use the presentations > section tab to choose which custom fields to hide for any
-article in that section.
-* When you write or edit an article, your per-section custom fields preferences will
-appear.
-* If you change the section of an article and then edit it, the new section's
-fields will appear (or disappear) as appropriate to the section.
+* Initial release.
 
  <span style="float:right"><a href="#top" title="Jump to the top">top</a></span>
 
