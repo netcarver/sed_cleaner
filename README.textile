@@ -5,3 +5,8 @@ A plugin for "Textile":http://textpattern.com.
 h2. Description
 
 Designed to do a little house cleaning on new sites.
+
+h2. License
+
+GPLv2
+
