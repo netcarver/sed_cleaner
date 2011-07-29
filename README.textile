@@ -1,6 +1,6 @@
 h1. sed_cleaner
 
-A plugin for "Textile":http://textpattern.com.
+A plugin for "Textpattern":http://textpattern.com.
 
 
 h2. Description...
