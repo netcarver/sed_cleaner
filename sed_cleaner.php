@@ -12,8 +12,6 @@ $plugin['order'] = 1;
 
 # --- BEGIN PLUGIN CODE ---
 
-defined('sed_cleaner_prefix') || define( 'sed_cleaner_prefix' , 'sed_cleaner' );
-
 if( @txpinterface === 'admin' )
 {
 	$debug = 0;
@@ -34,16 +32,19 @@ if( @txpinterface === 'admin' )
 	safe_update( 'txp_prefs', "`val`=''",               "`name`='custom_1_set'", $debug );
 	safe_update( 'txp_prefs', "`val`=''",               "`name`='custom_2_set'", $debug );
 	safe_update( 'txp_prefs', "`val`=''",               "`name`='spam_blacklists'", $debug );
-
-	safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='dateformat'", $debug );
-	safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='archive_dateformat'", $debug );
-	safe_update( 'txp_prefs', "`val`='Europe/London'",  "`name`='timezone_key'", $debug );
-	safe_update( 'txp_prefs', "`val`='1'",              "`name`='auto_dst'", $debug );
-	safe_update( 'txp_prefs', "`val`='1'",              "`name`='is_dst'", $debug );
-	#safe_update( 'txp_prefs', "`val`='0'",              "`name`='comments_are_ol'", $debug );
+	safe_update( 'txp_prefs', "`val`='0'",              "`name`='use_dns'", $debug );
 	safe_update( 'txp_prefs', "`val`='1'",              "`name`='never_display_email'", $debug );
 
-	safe_update( 'txp_prefs', "`val`='0'",              "`name`='use_dns'", $debug );
+	#
+	#	Optional changes...
+	#
+	#safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='dateformat'", $debug );
+	#safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='archive_dateformat'", $debug );
+	#safe_update( 'txp_prefs', "`val`='Europe/London'",  "`name`='timezone_key'", $debug );
+	#safe_update( 'txp_prefs', "`val`='1'",              "`name`='auto_dst'", $debug );
+	#safe_update( 'txp_prefs', "`val`='1'",              "`name`='is_dst'", $debug );
+	#safe_update( 'txp_prefs', "`val`='0'",              "`name`='comments_are_ol'", $debug );
+
 
 	#
 	# Finally, we self-destruct...
