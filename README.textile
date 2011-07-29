@@ -2,11 +2,48 @@ h1. sed_cleaner
 
 A plugin for "Textile":http://textpattern.com.
 
-h2. Description
 
-Designed to do a little house cleaning on new sites.
+h2. Description...
 
-h2. License
+Designed to do a little cleanup in *new* textpattern installations. Note the *new* in that statement.
+
+
+h2. Primary Targets...
+
+_This plugin will terminate the following with extreme prejudice upon installation_
+
+* Comments
+* Links
+* Images
+* Categories (of all types)
+* Articles
+
+It is also designed to self-terminate after a single run.
+
+**Do not use this plugin in existing installations with any content you wish to keep.**
+
+
+h2. Secondary Targets...
+
+In addition, this plugin will terminate or change a few additional textpattern preferences.
+
+* The default custom fields are removed.
+* The site slogan is blanked.
+* DNS and spam lookups are turned off.
+* Email addresses are hidden in comments.
+
+
+h2. Installation...
+
+# In your _new_ textpattern installation, go to @admin > plugins@ and upload the plugin.
+# Accept the new plugin
+# Enable the plugin
+# Navigate to any other admin side tab
+
+Your content -- and the plugin itself -- should now be gone.
+
+
+h2. License...
 
 GPLv2
 
