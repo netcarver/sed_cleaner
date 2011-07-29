@@ -35,6 +35,7 @@ In addition, this plugin will terminate or change a few additional textpattern p
 
 h2. Installation...
 
+# Either compile the plugin or "download it.":https://gist.github.com/1114938
 # In your _new_ textpattern installation, go to @admin > plugins@ and upload the plugin.
 # Accept the new plugin
 # Enable the plugin
