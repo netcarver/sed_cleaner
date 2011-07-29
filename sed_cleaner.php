@@ -5,7 +5,7 @@ $plugin['version'] = '0.1';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
-$plugin['type'] = '1';
+$plugin['type'] = '3';
 $plugin['order'] = 1;
 
 @include_once('../zem_tpl.php');
