@@ -48,53 +48,6 @@ if( @txpinterface === 'admin' )
 	##safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 }
 
-
-#===============================================================================
-#	Data access routines...
-#===============================================================================
-function _sed_cleaner_prefix_key($key)
-	{
-	return sed_cleaner_prefix.'-'.$key;
-	}
-function _sed_cleaner_install_pref($key,$value,$type)
-	{
-	global $prefs , $textarray , $_sed_sf_l18n;
-	$k = _sed_sf_prefix_key( $key );
-	if( !array_key_exists( $k , $prefs ) )
-		{
-		set_pref( $k , $value , sed_cleaner_prefix , 1 , $type );
-		$prefs[$k] = $value;
-		}
-	# Insert the preference strings for non-mlp sites...
-	if( !array_key_exists( $k , $textarray ) )
-		$textarray[$k] = $_sed_sf_l18n[$key];
-	}
-function _sed_cleaner_remove_prefs()
-	{
-	safe_delete( 'txp_prefs' , "`event`=" . sed_cleaner_prefix . "'" );
-	}
-function _sed_sf_handle_prefs_pre( $event , $step )
-	{
-	global $prefs, $sed_sf_prefs;
-
-	if( version_compare( $prefs['version'] , '4.0.6' , '>=' ) )
-		{
-		foreach( $sed_sf_prefs as $key=>$data )
-			_sed_sf_install_pref( $key , $data['val'] , $data['type'] );
-		}
-	else
-		_sed_sf_remove_prefs();
-	}
-#===============================================================================
-#	Routines to handle admin presentation > sections tab...
-#===============================================================================
-function _sed_sf_ps_extract( $section , $key )
-	{
-	$field_name = 'hide_'.$section.'_'.$key;
-	$value = ps( $field_name );
-	$d = (empty( $value )) ? '0' : '1';
-	return $key.'="'.$d.'";';
-	}
 # --- END PLUGIN CODE ---
 
 /*
