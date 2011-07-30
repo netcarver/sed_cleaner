@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.1';
+$plugin['version'] = '0.2';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -45,6 +45,11 @@ if( @txpinterface === 'admin' )
 	#safe_update( 'txp_prefs', "`val`='1'",              "`name`='is_dst'", $debug );
 	#safe_update( 'txp_prefs', "`val`='0'",              "`name`='comments_are_ol'", $debug );
 
+	#
+	# Remove the setup directory (if permissions allow)...
+	#
+	sed_cleaner_rmdir( 'setup', $debug );
+
 
 	#
 	# Finally, we self-destruct...
@@ -52,6 +57,36 @@ if( @txpinterface === 'admin' )
 	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 }
 
+
+#
+#	sed_cleaner_rmdir removes a dir non-recursively.
+#
+function sed_cleaner_rmdir( $dir, $debug = 0 )
+{
+	if( !is_string( $dir ) || empty( $dir ) || !is_dir( $dir ) )
+	{
+		echo "<pre>Could not remove the directory [$dir].</pre><br />";
+		return false;
+	}
+
+	$objects = scandir($dir);
+	foreach ($objects as $object)
+	{
+		if ($object != "." && $object != "..")
+		{
+			if (filetype($dir."/".$object) !== "dir")
+			{
+				if( $debug ) echo "<pre>Removing $dir/$object\n</pre>";
+				unlink($dir."/".$object);
+			}
+    }
+  }
+  reset($objects);
+	if( $debug ) echo "<pre>Removing $dir\n</pre>";
+	rmdir($dir);
+
+	return true;
+}
 # --- END PLUGIN CODE ---
 
 /*
@@ -80,7 +115,11 @@ Kills site content. Only enable this on **NEW** sites!
 
 h2(#changelog). Change Log
 
-h3. v0.1
+h3. v0.2 (30th July, 2011)
+
+* Tries to remove the setup directory where file permissions allow.
+
+h3. v0.1 (29th July, 2011)
 
 * Initial release.
 

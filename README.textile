@@ -18,8 +18,6 @@ When enabled, this plugin will terminate the following with extreme prejudice...
 * Categories (of all types)
 * Articles
 
-It will then self-terminate.
-
 *Do not use this plugin in existing installations with any content you wish to keep.*
 
 
@@ -27,10 +25,22 @@ h2. Secondary Targets...
 
 In addition, this plugin will adjust a few preferences...
 
-* The default custom fields are removed.
-* The site slogan is blanked.
-* DNS and spam lookups are turned off.
-* Email addresses are hidden in comments.
+* The default custom fields are removed
+* The site slogan is blanked
+* DNS and spam lookups are turned off
+* Email addresses are hidden in comments
+
+
+h2. Filesystem Targets...
+
+Where filesystem permissions allow the plugin will...
+
+* Remove the setup directory
+
+
+h2. Final Target...
+
+After searching out all the above sed_cleaner will self-terminate.
 
 
 h2. Installation...
