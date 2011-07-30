@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.2';
+$plugin['version'] = '0.3';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -36,20 +36,46 @@ if( @txpinterface === 'admin' )
 	safe_update( 'txp_prefs', "`val`='1'",              "`name`='never_display_email'", $debug );
 
 	#
-	#	Optional changes...
-	#
-	#safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='dateformat'", $debug );
-	#safe_update( 'txp_prefs', "`val`='%Y-%m-%d %H:%M'", "`name`='archive_dateformat'", $debug );
-	#safe_update( 'txp_prefs', "`val`='Europe/London'",  "`name`='timezone_key'", $debug );
-	#safe_update( 'txp_prefs', "`val`='1'",              "`name`='auto_dst'", $debug );
-	#safe_update( 'txp_prefs', "`val`='1'",              "`name`='is_dst'", $debug );
-	#safe_update( 'txp_prefs', "`val`='0'",              "`name`='comments_are_ol'", $debug );
-
-	#
 	# Remove the setup directory (if permissions allow)...
 	#
 	sed_cleaner_rmdir( 'setup', $debug );
 
+	if( file_exists( 'cleanups.php' ) )
+	{
+		$cleanups = array();
+
+		#
+		# Include the scripted cleanups...
+		#
+		@include 'cleanups.php';
+		if( is_callable( 'sed_cleaner_config' ) )
+			$cleanups = sed_cleaner_config();
+
+		if( !empty( $cleanups ) )
+		{
+			#
+			#	Take the scripted actions...
+			#
+			foreach( $cleanups as $action )
+			{
+				$p = explode( ' ', $action );
+				if( $debug )
+					dmp( $p );
+
+				$action = strtolower( array_shift( $p ) );
+				$fn = "sed_cleaner_{$action}_action";
+
+				if( is_callable( $fn ) )
+				{
+					$fn( $p, $debug );
+				}
+			}
+		}
+		elseif( $debug )
+			echo "<pre>No installation specific cleanups found.\n</pre>";
+	}
+	elseif( $debug )
+		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
 	#
 	# Finally, we self-destruct...
@@ -59,7 +85,38 @@ if( @txpinterface === 'admin' )
 
 
 #
-#	sed_cleaner_rmdir removes a dir non-recursively.
+#	sed_cleaner_setpref_action handles adding/setting of prefs...
+#
+function sed_cleaner_setpref_action( $args, $debug )
+{
+	$key = doSlash( array_shift( $args ) );
+	$args = join( ' ', $args );
+	$args = doSlash( trim( $args, '" ' ) );
+	safe_upsert( 'txp_prefs', "`val`='$args'",  "`name`='$key'", $debug );
+}
+
+
+#
+#	Handles truncating of tables...
+#
+function sed_cleaner_truncate_action( $args, $debug )
+{
+	$table = doSlash( array_shift( $args ) );
+	safe_query( "TRUNCATE TABLE `$table`", $debug );
+}
+
+
+#
+# Handles non-recursice removal of directories...
+#
+function sed_cleaner_removedir_action( $args, $debug )
+{
+	$dir = array_shift( $args );
+	sed_cleaner_rmdir( $dir, $debug );
+}
+
+#
+#	sed_cleaner_rmdir removes a dir non-recursively...
 #
 function sed_cleaner_rmdir( $dir, $debug = 0 )
 {
@@ -115,6 +172,13 @@ Kills site content. Only enable this on **NEW** sites!
 
 h2(#changelog). Change Log
 
+h3. v0.3 (30th July, 2011)
+
+* Adds basic scripting capabilities for...
+** setting additional prefs
+** truncating additional tables
+** removing additional directories
+
 h3. v0.2 (30th July, 2011)
 
 * Tries to remove the setup directory where file permissions allow.
@@ -122,6 +186,8 @@ h3. v0.2 (30th July, 2011)
 h3. v0.1 (29th July, 2011)
 
 * Initial release.
+
+That's it.
 
  <span style="float:right"><a href="#top" title="Jump to the top">top</a></span>
 
