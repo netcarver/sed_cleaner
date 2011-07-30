@@ -8,6 +8,9 @@ function sed_cleaner_config()
 		'setpref enable_xmlrpc_server "0"', # turn off rpc
 		'removedir ../rpc',  							  # removes the rpc directory.
 
+		#
+		#	Configure some of my favourite pref settings...
+		#
 		'setpref dateformat "%Y-%m-%d %H:%M"', 
 		'setpref archive_dateformat "%Y-%m-%d %H:%M"',
 		'setpref timezone_key "Europe/London"',
