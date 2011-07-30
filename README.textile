@@ -10,7 +10,7 @@ Designed to do a little cleanup in *new* textpattern installations. Note the *ne
 
 h2. Primary Targets...
 
-_This plugin will terminate the following with extreme prejudice upon installation_
+This plugin will terminate the following with extreme prejudice upon installation...
 
 * Comments
 * Links
@@ -25,7 +25,7 @@ It is also designed to self-terminate after a single run.
 
 h2. Secondary Targets...
 
-In addition, this plugin will terminate or change a few additional textpattern preferences.
+In addition, this plugin will adjust a few preferences...
 
 * The default custom fields are removed.
 * The site slogan is blanked.
@@ -37,7 +37,6 @@ h2. Installation...
 
 # Either compile the plugin or "download it.":https://gist.github.com/1114938
 # In your _new_ textpattern installation, go to @admin > plugins@ and upload the plugin.
-# Accept the new plugin
 # Enable the plugin
 # Navigate to any other admin side tab
 
