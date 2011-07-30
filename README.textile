@@ -65,9 +65,9 @@ You can customise the cleanup actions to be taken by editing the file. Once you'
 h3. Syntax...
 
 |_. Command |_. Purpose |_. Arguments |_. Examples |
-| @setpref@ | Sets the named preference to the given value. | The name of the preference, followed by the value in double quotes. | @'setpref dateformat "%Y-%m-%d %H:%M"'@ |
-| @truncate@ | Resets the named table. | The name of the table to reset. | @'truncate txp_discuss_ipban'@ |
-| @removedir@ | Removes the named directory (non recursive) relative to the textpattern directory | The directory to be removed. | @'removedir ../rpc'@ |
+|^. @setpref@ |^. Sets the named preference to the given value. |^. The name of the preference, followed by the value in double quotes. |^. @'setpref dateformat "%Y-%m-%d %H:%M"'@ |
+|^. @truncate@ |^. Resets the named table. |^. The name of the table to reset. |^. @'truncate txp_discuss_ipban'@ |
+|^. @removedir@ |^. Removes the named directory (non recursive) relative to the textpattern directory |^. The directory to be removed. |^. @'removedir ../rpc'@ |
 
 Please study the packaged cleanups.php file for more examples.
 
