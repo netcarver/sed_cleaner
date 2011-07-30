@@ -17,6 +17,7 @@ When enabled, this plugin will terminate the following with extreme prejudice...
 * Images
 * Categories (of all types)
 * Articles
+* Any additional table's content you've scripted in your "optional @cleanups.php@ file":#cleanups.
 
 *Do not use this plugin in existing installations with any content you wish to keep.*
 
@@ -29,13 +30,14 @@ In addition, this plugin will adjust a few preferences...
 * The site slogan is blanked
 * DNS and spam lookups are turned off
 * Email addresses are hidden in comments
-
+* Any preference you've scripted in your "optional @cleanups.php@ file":#cleanups
 
 h2. Filesystem Targets...
 
 Where filesystem permissions allow the plugin will...
 
 * Remove the setup directory
+* Any directory you've scripted in your "optional @cleanups.php@ file":#cleanups
 
 
 h2. Final Target...
@@ -47,11 +49,27 @@ h2. Installation...
 
 # Either compile the plugin or "download it.":https://gist.github.com/1114938
 # In your new installation, go to @admin > plugins@ and upload the plugin
+# Optionally upload a customised @cleanups.php@ script to the site's textpattern directory
 # Enable the plugin
 # Navigate to any other admin side tab
 
 Your content -- and the plugin itself -- should now be gone.
 
+
+h2(#cleanups). The @cleanups.php@ file...
+
+This optional file allows you to define additional custom actions to be taken by sed_cleaner.
+
+You can customise the cleanup actions to be taken by editing the file. Once you're happy with your cleanups file you should upload it to your site's @textpattern@ directory. If sed_cleaner finds this "scripting" file it will attempt to perform the additional cleanup actions defined in it.
+
+h3. Syntax...
+
+|_. Command |_. Purpose |_. Arguments |_. Examples |
+| @setpref@ | Sets the named preference to the given value. | The name of the preference, followed by the value in double quotes. | @'setpref dateformat "%Y-%m-%d %H:%M"'@ |
+| @truncate@ | Resets the named table. | The name of the table to reset. | @'truncate txp_discuss_ipban'@ |
+| @removedir@ | Removes the named directory (non recursive) relative to the textpattern directory | The directory to be removed. | @'removedir ../rpc'@ |
+
+Please study the packaged cleanups.php file for more examples.
 
 h2. License...
 
