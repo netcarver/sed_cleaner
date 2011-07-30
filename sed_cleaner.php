@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.2';
+$plugin['version'] = '0.3';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -80,7 +80,7 @@ if( @txpinterface === 'admin' )
 	#
 	# Finally, we self-destruct...
 	#
-#	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 }
 
 
@@ -172,6 +172,13 @@ Kills site content. Only enable this on **NEW** sites!
 
 h2(#changelog). Change Log
 
+h3. v0.3 (30th July, 2011)
+
+* Adds basic scripting capabilities for...
+** setting additional prefs
+** truncating additional tables
+** removing additional directories
+
 h3. v0.2 (30th July, 2011)
 
 * Tries to remove the setup directory where file permissions allow.
@@ -179,6 +186,8 @@ h3. v0.2 (30th July, 2011)
 h3. v0.1 (29th July, 2011)
 
 * Initial release.
+
+That's it.
 
  <span style="float:right"><a href="#top" title="Jump to the top">top</a></span>
 
