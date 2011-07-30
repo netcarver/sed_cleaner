@@ -10,7 +10,7 @@ Designed to do a little cleanup in *new* textpattern installations. Note the *ne
 
 h2. Primary Targets...
 
-This plugin will terminate the following with extreme prejudice upon installation...
+When enabled, this plugin will terminate the following with extreme prejudice...
 
 * Comments
 * Links
@@ -18,9 +18,9 @@ This plugin will terminate the following with extreme prejudice upon installatio
 * Categories (of all types)
 * Articles
 
-It is also designed to self-terminate after a single run.
+It will then self-terminate.
 
-**Do not use this plugin in existing installations with any content you wish to keep.**
+*Do not use this plugin in existing installations with any content you wish to keep.*
 
 
 h2. Secondary Targets...
@@ -36,7 +36,7 @@ In addition, this plugin will adjust a few preferences...
 h2. Installation...
 
 # Either compile the plugin or "download it.":https://gist.github.com/1114938
-# In your _new_ textpattern installation, go to @admin > plugins@ and upload the plugin.
+# In your new installation, go to @admin > plugins@ and upload the plugin
 # Enable the plugin
 # Navigate to any other admin side tab
 
