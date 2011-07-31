@@ -6,7 +6,7 @@ A plugin for "Textpattern":http://textpattern.com.
 h2. Description...
 
 Designed to do a little cleanup in *new* textpattern installations. Note the *new* in that statement.
-It can also automatically install plugins that you might have included in your installations @files@ directory.
+It can also automatically install plugins that you might have included in your installation's @files@ directory.
 
 
 h2. Primary Targets...
