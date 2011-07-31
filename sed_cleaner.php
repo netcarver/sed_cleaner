@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.4';
+$plugin['version'] = '0.4.1';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -15,17 +15,18 @@ $plugin['order'] = 1;
 if( @txpinterface === 'admin' )
 {
 	global $prefs, $txpcfg;
-	$files_path = $prefs['file_base_path']; 
+	$files_path = $prefs['file_base_path'];
+	$tpref = $txpcfg['table_prefix'];
 	$debug = 0;
 
 	#
 	#	Remove default content...
 	#
-	safe_query( 'TRUNCATE TABLE `txp_discuss`', $debug );
-	safe_query( 'TRUNCATE TABLE `txp_link`', $debug );
-	safe_query( 'TRUNCATE TABLE `txp_category`', $debug );
-	safe_query( 'TRUNCATE TABLE `textpattern`', $debug );
-	safe_query( 'TRUNCATE TABLE `txp_image`', $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}txp_discuss`", $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}txp_link`", $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}txp_category`", $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}textpattern`", $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}txp_image`", $debug );
 
 	#
 	#	Setup some defaults...
@@ -66,7 +67,7 @@ if( @txpinterface === 'admin' )
 				if( !is_dir($fileaddr) )
 				{
 					$files[] = $file;
-					if( $debug ) echo " : accepting as plugin.";
+					if( $debug ) echo " : accepting as a candidate plugin file.";
 				}
 			}
 		}
@@ -75,7 +76,7 @@ if( @txpinterface === 'admin' )
 
 	if( empty( $files ) )
 	{
-		if( $debug ) echo " no plugins found: exiting.";
+		if( $debug ) echo " no plugin candidate files found.";
 	}
 	else
 	{
@@ -139,7 +140,7 @@ if( @txpinterface === 'admin' )
 	#	Now cleanup the cleanup files...
 	#
 	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
-	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
+	safe_query( "TRUNCATE TABLE `{$tpref}txp_file`", $debug );
 
 	if( !$debug )
 	{
@@ -216,7 +217,7 @@ function sed_cleaner_rmdir( $dir, $debug = 0 )
 {
 	if( !is_string( $dir ) || empty( $dir ) || !is_dir( $dir ) )
 	{
-		echo "<pre>Could not remove the directory [$dir].</pre><br />";
+		echo "<pre>Could not remove the directory [$dir]. It doesn't seem to exist.</pre><br />";
 		return false;
 	}
 
