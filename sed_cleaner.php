@@ -138,13 +138,13 @@ if( @txpinterface === 'admin' )
 	#
 	#	Now cleanup the cleanup files...
 	#
-#	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
-#	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
+	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
 
 	if( !$debug )
 	{
 		#
-		# Finally, we self-destruct...
+		# Finally, we self-destruct unless debugging and redirect to the plugins tab...
 		#
 		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 		while( @ob_end_clean() );
