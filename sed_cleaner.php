@@ -14,6 +14,8 @@ $plugin['order'] = 1;
 
 if( @txpinterface === 'admin' )
 {
+	global $prefs, $txpcfg;
+	$files = $prefs['file_base_path']; 
 	$debug = 0;
 
 	#
@@ -44,8 +46,7 @@ if( @txpinterface === 'admin' )
 	#
 	# Process the cleanups.php file...
 	#
-	global $prefs;
-	$file = $prefs['file_base_path'] . '/cleanups.php' ;
+	$file = $files . DS . 'cleanups.php' ;
 	if( file_exists( $file ) )
 	{
 		$cleanups = array();
@@ -82,6 +83,13 @@ if( @txpinterface === 'admin' )
 	}
 	elseif( $debug )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
+
+
+	#
+	#	Try to auto-install any plugin files found in the files directory...
+	#
+	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
+
 
 	#
 	#	Now cleanup the cleanup files...
@@ -154,13 +162,13 @@ function sed_cleaner_empty_dir($dir, $debug, $exclude_hidden = false)
 	{
 		if ($object != "." && $object != "..")
 		{
-			if (filetype($dir."/".$object) !== "dir")
+			if (filetype($dir . DS . $object) !== "dir")
 			{
 				if( $object[0] == '.' && $exclude_hidden )
 					continue;
 
 				if( $debug ) echo "<pre>Removing $dir/$object\n</pre>";
-				unlink($dir."/".$object);
+				unlink($dir. DS .$object);
 			}
     }
   }
