@@ -80,7 +80,7 @@ if( @txpinterface === 'admin' )
 	#
 	# Finally, we self-destruct...
 	#
-	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+#	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 }
 
 
@@ -126,6 +126,16 @@ function sed_cleaner_rmdir( $dir, $debug = 0 )
 		return false;
 	}
 
+	sed_cleaner_empty_dir( $dir, $debug );
+
+	if( $debug ) echo "<pre>Removing $dir\n</pre>";
+	rmdir($dir);
+
+	return true;
+}
+
+function sed_cleaner_empty_dir($dir, $debug)
+{
 	$objects = scandir($dir);
 	foreach ($objects as $object)
 	{
@@ -139,11 +149,8 @@ function sed_cleaner_rmdir( $dir, $debug = 0 )
     }
   }
   reset($objects);
-	if( $debug ) echo "<pre>Removing $dir\n</pre>";
-	rmdir($dir);
-
-	return true;
 }
+
 # --- END PLUGIN CODE ---
 
 /*
