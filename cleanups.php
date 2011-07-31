@@ -18,6 +18,11 @@ function sed_cleaner_config()
 		'setpref is_dst "1"',
 		'setpref comments_are_ol "0"',
 		'setpref permlink_mode "section_title"',
+
+		#
+		# Example of enabling plugins (if installed)...
+		#
+		# 'enableplugin smd_admin_themes',
 	);
 }
 
