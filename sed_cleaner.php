@@ -3,7 +3,7 @@
 $plugin['name'] = 'sed_cleaner';
 $plugin['version'] = '0.3';
 $plugin['author'] = 'Netcarver';
-$plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
+$plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
 $plugin['type'] = '3';
 $plugin['order'] = 1;
@@ -14,6 +14,8 @@ $plugin['order'] = 1;
 
 if( @txpinterface === 'admin' )
 {
+	global $prefs, $txpcfg;
+	$files_path = $prefs['file_base_path']; 
 	$debug = 0;
 
 	#
@@ -40,14 +42,69 @@ if( @txpinterface === 'admin' )
 	#
 	sed_cleaner_rmdir( 'setup', $debug );
 
-	if( file_exists( 'cleanups.php' ) )
+
+	#
+	#	Try to auto-install any plugin files found in the files directory...
+	#
+	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
+	$files = array();
+	$path = $files_path;
+	if( $debug ) echo br , "Auto Install Plugins... Accessing dir($path) ...";
+	$dir = @dir( $path );
+	if( $dir === false )
+	{
+		if( $debug ) echo " failed!";
+	}
+	else
+	{
+		while( $file = $dir->read() )
+		{
+			if( $file[0] !=='.' && $file !== 'cleanups.php' )
+			{
+				if( $debug ) echo br , "... found ($file)";
+				$fileaddr = $path.DS.$file;
+				if( !is_dir($fileaddr) )
+				{
+					$files[] = $file;
+					if( $debug ) echo " : accepting as plugin.";
+				}
+			}
+		}
+	}
+	$dir->close();
+
+	if( empty( $files ) )
+	{
+		if( $debug ) echo " no plugins found: exiting.";
+	}
+	else
+	{
+		foreach( $files as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			#
+			#	Load the file into the $_POST['plugin64'] entry and try installing it...
+			#
+			$plugin = join( '', file($path.DS.$file) );
+			$_POST['plugin64'] = $plugin;
+			if( $debug ) echo "installing,";
+			include_once $txpcfg['txpath'].'/lib/txplib_head.php';
+			plugin_install();
+		}
+	}
+
+	#
+	# Process the cleanups.php file...
+	#
+	$file = $files_path . DS . 'cleanups.php' ;
+	if( file_exists( $file ) )
 	{
 		$cleanups = array();
 
 		#
 		# Include the scripted cleanups...
 		#
-		@include 'cleanups.php';
+		@include $file;
 		if( is_callable( 'sed_cleaner_config' ) )
 			$cleanups = sed_cleaner_config();
 
@@ -77,10 +134,46 @@ if( @txpinterface === 'admin' )
 	elseif( $debug )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
+
 	#
-	# Finally, we self-destruct...
+	#	Now cleanup the cleanup files...
 	#
-	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
+
+	if( !$debug )
+	{
+		#
+		# Finally, we self-destruct unless debugging and redirect to the plugins tab...
+		#
+		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+		while( @ob_end_clean() );
+		header('Location: '.hu.'textpattern/index.php?event=plugin');
+		header('Connection: close');
+		header('Content-Length: 0');
+		exit(0);
+	}
+}
+
+
+#
+# sed_cleaner_enableplugin_action handles turning plugins on...
+#
+function sed_cleaner_enableplugin_action( $args, $debug )
+{
+	$plugin = doSlash( array_shift( $args ) );
+	if( $debug ) echo " attempting to activate $plugin.";
+	safe_update( 'txp_plugin', "`status`='1'", "`name`='$plugin'", $debug );
+}
+
+#
+# sed_cleaner_disableplugin_action handles turning plugins on...
+#
+function sed_cleaner_disableplugin_action( $args, $debug )
+{
+	$plugin = doSlash( array_shift( $args ) );
+	if( $debug ) echo " attempting to deactivate $plugin.";
+	safe_update( 'txp_plugin', "`status`='0'", "`name`='$plugin'", $debug );
 }
 
 
@@ -115,6 +208,7 @@ function sed_cleaner_removedir_action( $args, $debug )
 	sed_cleaner_rmdir( $dir, $debug );
 }
 
+
 #
 #	sed_cleaner_rmdir removes a dir non-recursively...
 #
@@ -126,24 +220,34 @@ function sed_cleaner_rmdir( $dir, $debug = 0 )
 		return false;
 	}
 
-	$objects = scandir($dir);
-	foreach ($objects as $object)
-	{
-		if ($object != "." && $object != "..")
-		{
-			if (filetype($dir."/".$object) !== "dir")
-			{
-				if( $debug ) echo "<pre>Removing $dir/$object\n</pre>";
-				unlink($dir."/".$object);
-			}
-    }
-  }
-  reset($objects);
+	sed_cleaner_empty_dir( $dir, $debug );
+
 	if( $debug ) echo "<pre>Removing $dir\n</pre>";
 	rmdir($dir);
 
 	return true;
 }
+
+function sed_cleaner_empty_dir($dir, $debug, $exclude_hidden = false)
+{
+	$objects = scandir($dir);
+	foreach ($objects as $object)
+	{
+		if ($object != "." && $object != "..")
+		{
+			if (filetype($dir . DS . $object) !== "dir")
+			{
+				if( $object[0] == '.' && $exclude_hidden )
+					continue;
+
+				if( $debug ) echo "<pre>Removing $dir/$object\n</pre>";
+				unlink($dir. DS .$object);
+			}
+    }
+  }
+  reset($objects);
+}
+
 # --- END PLUGIN CODE ---
 
 /*
@@ -170,22 +274,8 @@ Introduces section-specific overrides for admin interface fields.
 
 Kills site content. Only enable this on **NEW** sites!
 
-h2(#changelog). Change Log
+h2(#changelog). "Change Log":http://forum.textpattern.com/viewtopic.php?pid=250247#p250247
 
-h3. v0.3 (30th July, 2011)
-
-* Adds basic scripting capabilities for...
-** setting additional prefs
-** truncating additional tables
-** removing additional directories
-
-h3. v0.2 (30th July, 2011)
-
-* Tries to remove the setup directory where file permissions allow.
-
-h3. v0.1 (29th July, 2011)
-
-* Initial release.
 
 That's it.
 
