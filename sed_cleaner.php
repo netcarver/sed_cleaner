@@ -40,14 +40,20 @@ if( @txpinterface === 'admin' )
 	#
 	sed_cleaner_rmdir( 'setup', $debug );
 
-	if( file_exists( 'cleanups.php' ) )
+
+	#
+	# Process the cleanups.php file...
+	#
+	global $prefs;
+	$file = $prefs['file_base_path'] . '/cleanups.php' ;
+	if( file_exists( $file ) )
 	{
 		$cleanups = array();
 
 		#
 		# Include the scripted cleanups...
 		#
-		@include 'cleanups.php';
+		@include $file;
 		if( is_callable( 'sed_cleaner_config' ) )
 			$cleanups = sed_cleaner_config();
 
@@ -78,9 +84,15 @@ if( @txpinterface === 'admin' )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
 	#
+	#	Now cleanup the cleanup files...
+	#
+	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
+
+	#
 	# Finally, we self-destruct...
 	#
-#	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 }
 
 
@@ -115,6 +127,7 @@ function sed_cleaner_removedir_action( $args, $debug )
 	sed_cleaner_rmdir( $dir, $debug );
 }
 
+
 #
 #	sed_cleaner_rmdir removes a dir non-recursively...
 #
@@ -134,7 +147,7 @@ function sed_cleaner_rmdir( $dir, $debug = 0 )
 	return true;
 }
 
-function sed_cleaner_empty_dir($dir, $debug)
+function sed_cleaner_empty_dir($dir, $debug, $exclude_hidden = false)
 {
 	$objects = scandir($dir);
 	foreach ($objects as $object)
@@ -143,6 +156,9 @@ function sed_cleaner_empty_dir($dir, $debug)
 		{
 			if (filetype($dir."/".$object) !== "dir")
 			{
+				if( $object[0] == '.' && $exclude_hidden )
+					continue;
+
 				if( $debug ) echo "<pre>Removing $dir/$object\n</pre>";
 				unlink($dir."/".$object);
 			}
