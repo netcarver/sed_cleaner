@@ -15,7 +15,7 @@ $plugin['order'] = 1;
 if( @txpinterface === 'admin' )
 {
 	global $prefs, $txpcfg;
-	$files = $prefs['file_base_path']; 
+	$files_path = $prefs['file_base_path']; 
 	$debug = 0;
 
 	#
@@ -46,7 +46,7 @@ if( @txpinterface === 'admin' )
 	#
 	# Process the cleanups.php file...
 	#
-	$file = $files . DS . 'cleanups.php' ;
+	$file = $files_path . DS . 'cleanups.php' ;
 	if( file_exists( $file ) )
 	{
 		$cleanups = array();
@@ -89,18 +89,71 @@ if( @txpinterface === 'admin' )
 	#	Try to auto-install any plugin files found in the files directory...
 	#
 	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
+	$files = array();
+	$path = $files_path;
+	if( $debug ) echo br , "Auto Install Plugins... Accessing dir($path) ...";
+	$dir = @dir( $path );
+	if( $dir === false )
+	{
+		if( $debug ) echo " failed!";
+	}
+	else
+	{
+		while( $file = $dir->read() )
+		{
+			if( $file[0] !=='.' && $file !== 'cleanups.php' )
+			{
+				if( $debug ) echo br , "... found ($file)";
+				$fileaddr = $path.DS.$file;
+				if( !is_dir($fileaddr) )
+				{
+					$files[] = $file;
+					if( $debug ) echo " : accepting as plugin.";
+				}
+			}
+		}
+	}
+	$dir->close();
+
+	if( empty( $files ) )
+	{
+		if( $debug ) echo " no plugins found: exiting.";
+	}
+	else
+	{
+		foreach( $files as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			#
+			#	Load the file into the $_POST['plugin64'] entry and try installing it...
+			#
+			$plugin = join( '', file($path.DS.$file) );
+			$_POST['plugin64'] = $plugin;
+			if( $debug ) echo "installing,";
+			include_once $txpcfg['txpath'].'/lib/txplib_head.php';
+			plugin_install();
+		}
+	}
 
 
 	#
 	#	Now cleanup the cleanup files...
 	#
-	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
-	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
+#	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+#	safe_query( 'TRUNCATE TABLE `txp_file`', $debug );
 
-	#
-	# Finally, we self-destruct...
-	#
-	safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+	if( !$debug )
+	{
+		#
+		# Finally, we self-destruct...
+		#
+		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
+		while( @ob_end_clean() );
+		header('Location: '.hu.'textpattern/index.php?event=plugin');
+		header('Connection: close');
+		header('Content-Length: 0');
+		exit(0);
+	}
 }
 
 
