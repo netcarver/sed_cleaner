@@ -44,48 +44,6 @@ if( @txpinterface === 'admin' )
 
 
 	#
-	# Process the cleanups.php file...
-	#
-	$file = $files_path . DS . 'cleanups.php' ;
-	if( file_exists( $file ) )
-	{
-		$cleanups = array();
-
-		#
-		# Include the scripted cleanups...
-		#
-		@include $file;
-		if( is_callable( 'sed_cleaner_config' ) )
-			$cleanups = sed_cleaner_config();
-
-		if( !empty( $cleanups ) )
-		{
-			#
-			#	Take the scripted actions...
-			#
-			foreach( $cleanups as $action )
-			{
-				$p = explode( ' ', $action );
-				if( $debug )
-					dmp( $p );
-
-				$action = strtolower( array_shift( $p ) );
-				$fn = "sed_cleaner_{$action}_action";
-
-				if( is_callable( $fn ) )
-				{
-					$fn( $p, $debug );
-				}
-			}
-		}
-		elseif( $debug )
-			echo "<pre>No installation specific cleanups found.\n</pre>";
-	}
-	elseif( $debug )
-		echo "<pre>No installation specific cleanup file found.\n</pre>";
-
-
-	#
 	#	Try to auto-install any plugin files found in the files directory...
 	#
 	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
@@ -134,6 +92,47 @@ if( @txpinterface === 'admin' )
 			plugin_install();
 		}
 	}
+
+	#
+	# Process the cleanups.php file...
+	#
+	$file = $files_path . DS . 'cleanups.php' ;
+	if( file_exists( $file ) )
+	{
+		$cleanups = array();
+
+		#
+		# Include the scripted cleanups...
+		#
+		@include $file;
+		if( is_callable( 'sed_cleaner_config' ) )
+			$cleanups = sed_cleaner_config();
+
+		if( !empty( $cleanups ) )
+		{
+			#
+			#	Take the scripted actions...
+			#
+			foreach( $cleanups as $action )
+			{
+				$p = explode( ' ', $action );
+				if( $debug )
+					dmp( $p );
+
+				$action = strtolower( array_shift( $p ) );
+				$fn = "sed_cleaner_{$action}_action";
+
+				if( is_callable( $fn ) )
+				{
+					$fn( $p, $debug );
+				}
+			}
+		}
+		elseif( $debug )
+			echo "<pre>No installation specific cleanups found.\n</pre>";
+	}
+	elseif( $debug )
+		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
 
 	#
