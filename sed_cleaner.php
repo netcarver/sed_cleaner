@@ -3,7 +3,7 @@
 $plugin['name'] = 'sed_cleaner';
 $plugin['version'] = '0.3';
 $plugin['author'] = 'Netcarver';
-$plugin['author_uri'] = 'http://txp-plugins.netcarving.com';
+$plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
 $plugin['type'] = '3';
 $plugin['order'] = 1;
@@ -274,22 +274,8 @@ Introduces section-specific overrides for admin interface fields.
 
 Kills site content. Only enable this on **NEW** sites!
 
-h2(#changelog). Change Log
+h2(#changelog). "Change Log":http://forum.textpattern.com/viewtopic.php?pid=250247#p250247
 
-h3. v0.3 (30th July, 2011)
-
-* Adds basic scripting capabilities for...
-** setting additional prefs
-** truncating additional tables
-** removing additional directories
-
-h3. v0.2 (30th July, 2011)
-
-* Tries to remove the setup directory where file permissions allow.
-
-h3. v0.1 (29th July, 2011)
-
-* Initial release.
 
 That's it.
 
