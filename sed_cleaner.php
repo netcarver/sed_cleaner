@@ -157,6 +157,27 @@ if( @txpinterface === 'admin' )
 
 
 #
+# sed_cleaner_enableplugin_action handles turning plugins on...
+#
+function sed_cleaner_enableplugin_action( $args, $debug )
+{
+	$plugin = doSlash( array_shift( $args ) );
+	if( $debug ) echo " attempting to activate $plugin.";
+	safe_update( 'txp_plugin', "`status`='1'", "`name`='$plugin'", $debug );
+}
+
+#
+# sed_cleaner_disableplugin_action handles turning plugins on...
+#
+function sed_cleaner_disableplugin_action( $args, $debug )
+{
+	$plugin = doSlash( array_shift( $args ) );
+	if( $debug ) echo " attempting to deactivate $plugin.";
+	safe_update( 'txp_plugin', "`status`='0'", "`name`='$plugin'", $debug );
+}
+
+
+#
 #	sed_cleaner_setpref_action handles adding/setting of prefs...
 #
 function sed_cleaner_setpref_action( $args, $debug )
