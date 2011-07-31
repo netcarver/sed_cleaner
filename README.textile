@@ -3,13 +3,13 @@ h1. sed_cleaner
 A plugin for "Textpattern":http://textpattern.com.
 
 
-h2. Description...
+h2. Description.
 
 Designed to do a little cleanup in *new* textpattern installations. Note the *new* in that statement.
 It can also automatically install plugins that you might have included in your installation's @files@ directory.
 
 
-h2. Primary Targets...
+h2. Primary Targets.
 
 When enabled, this plugin will terminate the following with extreme prejudice...
 
@@ -24,7 +24,7 @@ When enabled, this plugin will terminate the following with extreme prejudice...
 *Do not use this plugin in existing installations with any content you wish to keep.*
 
 
-h2. Secondary Targets...
+h2. Secondary Targets.
 
 In addition, this plugin will adjust a few preferences...
 
@@ -34,7 +34,7 @@ In addition, this plugin will adjust a few preferences...
 * Email addresses are hidden in comments
 * Any preference you've scripted in your optional @cleanups.php@ file
 
-h2. Filesystem Targets...
+h2. Filesystem Targets.
 
 Where filesystem permissions allow the plugin will...
 
@@ -43,30 +43,47 @@ Where filesystem permissions allow the plugin will...
 * Any directory you've scripted in your optional @cleanups.php@ file
 
 
-h2. Final Target...
+h2. Final Target.
 
 After searching out all the above sed_cleaner will self-terminate.
 
 
-h2. Installation...
+h2. Usage & Installation.
+
+h3. a) Basic content reset...
 
 # Either compile the plugin or "download it.":https://gist.github.com/1114938
 # In your new installation, go to @admin > plugins@ and upload the plugin
-# Optionally upload a customised @cleanups.php@ script to the site's @files@ directory (either via ftp or textpattern's @content > files@ tab.)
-# Optionally upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. This is best done via ftp but can also be done via textpattern's @content > files@ tab.
 # Enable the plugin
-# Navigate to any other admin side tab
+# Navigate to any other admin side tab.
 
-Your content -- and the plugin itself -- should now be gone. Whilst all the settings you defined should now be set and any plugins you defined, loaded.
+Your site should now have all its content removed and the sed_cleaner plugin will no longer be installed.
 
 
-h2(#cleanups). The cleanups.php file...
+h3. b) Content reset PLUS automatic plugin installation...
+
+# Upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. This can be done via ftp or via textpattern's @content > files@ tab. If you take the time to collate all your standard plugins into your deplopyment _before_ you ftp it up to your new site's server then you are really cooking.
+# Now proceed with the steps in a) above.
+
+Your site should now have all its content removed and have all the plugins installed that you uploaded to the @files@ directory.
+
+
+h3. c) Content reset, plugin installation PLUS customised prefs...
+
+# Create a customised @cleanups.php@ script.
+# Upload it to the site's @files@ directory (either via ftp or textpattern's @content > files@ tab.)
+# Now proceed with the steps in b) above.
+
+Your site should now have its content removed, plugins installed and preferences set.
+
+
+h2. The cleanups.php file.
 
 This optional file allows you to define additional custom actions to be taken by sed_cleaner.
 
 You can customise the cleanup actions to be taken by editing the file. Once you're happy with your cleanups file you should upload it to your site's @files@ directory. If sed_cleaner finds this "scripting" file it will attempt to perform the additional cleanup actions defined in it.
 
-h3. Syntax...
+h3. Command descriptions...
 
 |_. Command |_. Purpose |_. Arguments |_. Examples |
 |^. @setpref@ |^. Sets the named preference to the given value. |^. The name of the preference, followed by the value in double quotes. |^. @'setpref dateformat "%Y-%m-%d %H:%M"'@ |
@@ -78,7 +95,7 @@ h3. Syntax...
 
 Please study the packaged cleanups.php file for more examples.
 
-h2. License...
+h2. License.
 
 GPLv2
 
