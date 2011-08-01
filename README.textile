@@ -86,12 +86,18 @@ You can customise the cleanup actions to be taken by editing the file. Once you'
 h3. Command descriptions...
 
 |_. Command |_. Purpose |_. Arguments |_. Examples |
-|^. @setpref@ |^. Sets the named preference to the given value. |^. The name of the preference, followed by the value in double quotes. |^. @'setpref dateformat "%Y-%m-%d %H:%M"'@ |
-|^. @truncate@ |^. Resets the named table. |^. The name of the table to reset. |^. @'truncate txp_discuss_ipban'@ |
-|^. @removedir@ |^. Removes the named directory (non recursive) relative to the textpattern directory |^. The directory to be removed. |^. @'removedir ../rpc'@ |
-|^. @enableplugin@ |^. Enables the named plugin (if installed) |^. The plugin to be enabled. |^. @'enableplugin smd_admin_themes'@ |
-|^. @disableplugin@ |^. Disables the named plugin (if installed) |^. The plugin to be disabled. |^. @'disableplugin smd_admin_themes'@ |
-
+|^. @SetPref@ |^. Sets the named preference to the given value. |^. The name of the preference, followed by the value in double quotes. |^. @'SetPref dateformat "%Y-%m-%d %H:%M"'@ |
+|^. @Truncate@ |^. Resets the named table. |^. The name of the table to reset. |^. @'Truncate txp_discuss_ipban'@ |
+|^. @RemoveDir@ |^. Removes the named directory (non recursive) relative to the textpattern directory |^. The directory to be removed. |^. @'RemoveDir ../rpc'@ |
+|^. @EnablePlugin@ |^. Enables the named plugin (if installed) |^. The plugin to be enabled. |^. @'EnablePlugin smd_admin_themes'@ |
+|^. @DisablePlugin@ |^. Disables the named plugin (if installed) |^. The plugin to be disabled. |^. @'DisablePlugin smd_admin_themes'@ |
+|^. @RemoveSection@ |^. Remove a section from the site. |^. The name (not the title) of the section to be deleted. |^. @RemoveSection@ |
+|^. @AddSection@ |^. Adds a section to the site. |^. The _title_ of the section to be deleted. The name will be infered from this. |^. @AddSection@ |
+|^. @RemovePage@ |^. Remove a page from the site. |^. The name of the page to be removed. |^. @RemovePage@ |
+|^. @BlankPage@ |^. Remove the content of a page (or set the default page to placeholder) |^. The name of the page to be blanked. |^. @BlankPage@ |
+|^. @BlankCSS@ |^. Remove the content of a stylesheet. |^. The name of the stylesheet to blank. |^. @BlankCSS default@ |
+|^. @RemoveForm@ |^. Remove a form from the site. |^. The name of the form to be removed. |^. @RemoveForm@ |
+|^. @BlankForm@ |^. Remove the content of a form. |^. The name of the form to be blanked. |^. @BlankForm@ |
 
 Please study the packaged cleanups.php file for more examples.
 
