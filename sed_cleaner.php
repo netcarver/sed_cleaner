@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.4.1';
+$plugin['version'] = '0.4.2';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -24,9 +24,9 @@ if( @txpinterface === 'admin' )
 	#
 	safe_query( "TRUNCATE TABLE `{$tpref}txp_discuss`", $debug );
 	safe_query( "TRUNCATE TABLE `{$tpref}txp_link`", $debug );
-	safe_query( "TRUNCATE TABLE `{$tpref}txp_category`", $debug );
 	safe_query( "TRUNCATE TABLE `{$tpref}textpattern`", $debug );
 	safe_query( "TRUNCATE TABLE `{$tpref}txp_image`", $debug );
+	safe_delete( 'txp_category', "`name` <> 'root'");
 
 	#
 	#	Setup some defaults...
