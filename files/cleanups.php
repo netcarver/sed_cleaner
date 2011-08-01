@@ -16,26 +16,45 @@ function sed_cleaner_config()
 		#	Each line should start with a quote character and end with a quote and then a comma.
 		#
 
-		'truncate txp_discuss_ipban',				# resets the ipban table
+		'Truncate txp_discuss_ipban',       # resets the ipban table
 
-		'setpref enable_xmlrpc_server "0"', # turn off rpc
-		'removedir ../rpc',  							  # removes the rpc directory.
+		'SetPref enable_xmlrpc_server "0"', # turn off rpc
+		'RemoveDir ../rpc',                 # removes the rpc directory.
 
 		#
 		#	Configure some of my favourite pref settings...
 		#
-		'setpref dateformat "%Y-%m-%d %H:%M"', 
-		'setpref archive_dateformat "%Y-%m-%d %H:%M"',
-		'setpref timezone_key "Europe/London"',
-		'setpref auto_dst "1"',
-		'setpref is_dst "1"',
-		'setpref comments_are_ol "0"',
-		'setpref permlink_mode "section_title"',
+		'SetPref dateformat "%Y-%m-%d %H:%M"', 
+		'SetPref archive_dateformat "%Y-%m-%d %H:%M"',
+		'SetPref timezone_key "Europe/London"',
+		'SetPref auto_dst "1"',
+		'SetPref is_dst "1"',
+		'SetPref comments_are_ol "0"',
+		'SetPref permlink_mode "section_title"',
 
 		#
 		# Example of enabling plugins (if installed)...
 		#
-		# 'enableplugin smd_admin_themes',
+		# 'EnablePlugin smd_admin_themes',
+
+		#
+		#	To cleanup non-default sections & pages, uncomment any 
+		#	of the following...
+		#
+		#'RemoveSection articles',
+		#'RemoveSection about',
+		#'RemovePage archive',
+		#'BlankPage default',
+		#'BlankPage error_default',
+		#'BlankCSS default',
+		#'BlankForm default',
+		#'RemoveForm article_listing',
+		#'RemoveForm lofi',
+		#'RemoveForm search_results',
+		#'RemoveForm single',
+		#'RemoveForm popup_comments',
+		#'RemoveForm noted',
+		#'RemoveForm plainlinks',
 	);
 }
 
