@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.4.2';
+$plugin['version'] = '0.5';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -136,14 +136,14 @@ if( @txpinterface === 'admin' )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
 
-	#
-	#	Now cleanup the cleanup files...
-	#
-	sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
-	safe_query( "TRUNCATE TABLE `{$tpref}txp_file`", $debug );
-
 	if( !$debug )
 	{
+		#
+		#	cleanup the cleanup files...
+		#
+		sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+		safe_query( "TRUNCATE TABLE `{$tpref}txp_file`", $debug );
+
 		#
 		# Finally, we self-destruct unless debugging and redirect to the plugins tab...
 		#
@@ -156,10 +156,68 @@ if( @txpinterface === 'admin' )
 	}
 }
 
+#
+#   Action handlers for the cleanups.php script follow...
+#
 
-#
-# sed_cleaner_enableplugin_action handles turning plugins on...
-#
+function sed_cleaner_removesection_action( $args, $debug )
+{
+	$section_name = doSlash( array_shift( $args ) );
+	if( $debug ) echo " attempting to remove section $section_name.";
+	safe_delete('txp_section', "`name` = '$section_name'" , $debug );
+}
+
+function sed_cleaner_addsection_action( $args, $debug )
+{
+	$section_title = doSlash( array_shift( $args ) );
+	$section_name = strtolower(sanitizeForUrl($section_title));;
+	$default = doSlash(safe_row('page, css', 'txp_section', "name = 'default'"));
+	if( $debug ) echo " attempting to add a section entitled '$section_title'.";
+	safe_insert( 'txp_section',
+		"`name` = '$section_name',
+		`title` = '$section_title',
+		`page`  = '{$default['page']}',
+		`css`   = '{$default['css']}',
+		`is_default` = 0,
+		`in_rss` = 1,
+		`on_frontpage` = 1",
+		$debug );
+}
+
+function sed_cleaner_removepage_action( $args, $debug )
+{
+	$page = doSlash( array_shift( $args ) );
+	if( $debug ) echo " removing page $page.";
+	safe_delete( 'txp_page', "`name` = '$page'", $debug );
+}
+
+function sed_cleaner_blankpage_action( $args, $debug )
+{
+	$page = doSlash( array_shift( $args ) );
+	if( $debug ) echo " blanking page $page.";
+	$content = '';
+	if( $page === 'default' )
+		$content = <<<HTML
+<html>
+  <head>
+    <title><txp:site_name /></title>
+  </head>
+
+  <body>
+    <p><txp:site_name /> is blank.</p>
+  </body>
+</html>
+HTML;
+	safe_update( 'txp_page', "`user_html` = '$content'", "`name` = '$page'", $debug );
+}
+
+function sed_cleaner_blankcss_action( $args, $debug )
+{
+	$css = doSlash( array_shift( $args ) );
+	if( $debug ) echo " blanking CSS $css.";
+	safe_update( 'txp_css', "`css`=''", "`name`='$css'", $debug );
+}
+
 function sed_cleaner_enableplugin_action( $args, $debug )
 {
 	$plugin = doSlash( array_shift( $args ) );
@@ -167,9 +225,20 @@ function sed_cleaner_enableplugin_action( $args, $debug )
 	safe_update( 'txp_plugin', "`status`='1'", "`name`='$plugin'", $debug );
 }
 
-#
-# sed_cleaner_disableplugin_action handles turning plugins on...
-#
+function sed_cleaner_removeform_action( $args, $debug )
+{
+	$form = doSlash( array_shift( $args ) );
+	if( $debug ) echo " removing form $form.";
+  safe_delete( 'txp_form', "`name`='$form'", $debug );
+}
+
+function sed_cleaner_blankform_action( $args, $debug )
+{
+	$form = doSlash( array_shift( $args ) );
+	if( $debug ) echo " blanking form $form.";
+	safe_update( 'txp_form', "`Form` = ''", "`name`='$form'", $debug );
+}
+
 function sed_cleaner_disableplugin_action( $args, $debug )
 {
 	$plugin = doSlash( array_shift( $args ) );
@@ -177,10 +246,6 @@ function sed_cleaner_disableplugin_action( $args, $debug )
 	safe_update( 'txp_plugin', "`status`='0'", "`name`='$plugin'", $debug );
 }
 
-
-#
-#	sed_cleaner_setpref_action handles adding/setting of prefs...
-#
 function sed_cleaner_setpref_action( $args, $debug )
 {
 	$key = doSlash( array_shift( $args ) );
@@ -189,20 +254,12 @@ function sed_cleaner_setpref_action( $args, $debug )
 	safe_upsert( 'txp_prefs', "`val`='$args'",  "`name`='$key'", $debug );
 }
 
-
-#
-#	Handles truncating of tables...
-#
 function sed_cleaner_truncate_action( $args, $debug )
 {
 	$table = doSlash( array_shift( $args ) );
 	safe_query( "TRUNCATE TABLE `$table`", $debug );
 }
 
-
-#
-# Handles non-recursice removal of directories...
-#
 function sed_cleaner_removedir_action( $args, $debug )
 {
 	$dir = array_shift( $args );
