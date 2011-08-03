@@ -306,6 +306,21 @@ function sed_cleaner_empty_dir($dir, $debug, $exclude_hidden = false)
   reset($objects);
 }
 
+function sed_cleaner_removefile_action( $args, $debug )
+{
+	$filename = array_shift( $args );
+	$whitelist = array( 'license.txt', 'lgpl-2.1.txt', '../HISTORY.txt', '../README.txt' );
+	if( !in_array( $filename, $whitelist ) )
+	{
+		echo "[$filename] is not in the files whitelist.";
+		return;
+	}
+
+	if( $debug ) echo " attempting to remove file [$filename].";
+	if( file_exists( $filename ) )
+		unlink( $filename );
+}
+
 # --- END PLUGIN CODE ---
 
 /*
