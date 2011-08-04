@@ -62,7 +62,7 @@ Your site should now have all its content removed and the sed_cleaner plugin wil
 
 h3. b) Content reset PLUS automatic plugin installation...
 
-# Upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. This can be done via ftp or via textpattern's @content > files@ tab. If you take the time to collate all your standard plugins into your deplopyment _before_ you ftp it up to your new site's server then you are really cooking.
+# Upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. Each plugin file must end with the extension @.plugin@ as all other extensions will be skipped. Uploadubg can be done via ftp or via textpattern's @content > files@ tab. If you take the time to collate all your standard plugins into your deplopyment _before_ you ftp it up to your new site's server then you are really cooking.
 # Now proceed with the steps in a) above.
 
 Your site should now have all its content removed and have all the plugins installed that you uploaded to the @files@ directory.

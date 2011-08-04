@@ -60,7 +60,8 @@ if( @txpinterface === 'admin' )
 	{
 		while( $file = $dir->read() )
 		{
-			if( $file[0] !=='.' && $file !== 'cleanups.php' )
+			$parts = pathinfo($file);
+			if( $parts['extension'] === 'plugin' )
 			{
 				if( $debug ) echo br , "... found ($file)";
 				$fileaddr = $path.DS.$file;
