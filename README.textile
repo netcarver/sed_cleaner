@@ -62,7 +62,7 @@ Your site should now have all its content removed and the sed_cleaner plugin wil
 
 h3. b) Content reset PLUS automatic plugin installation...
 
-# Upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. This can be done via ftp or via textpattern's @content > files@ tab. If you take the time to collate all your standard plugins into your deplopyment _before_ you ftp it up to your new site's server then you are really cooking.
+# Upload the compiled plugin files you wish to have autoinstalled into the site's @files@ directory. Each plugin file must end with the extension @.plugin@ as all other extensions will be skipped. Uploadubg can be done via ftp or via textpattern's @content > files@ tab. If you take the time to collate all your standard plugins into your deplopyment _before_ you ftp it up to your new site's server then you are really cooking.
 # Now proceed with the steps in a) above.
 
 Your site should now have all its content removed and have all the plugins installed that you uploaded to the @files@ directory.
@@ -75,6 +75,15 @@ h3. c) Content reset, plugin installation PLUS customised prefs...
 # Now proceed with the steps in b) above.
 
 Your site should now have its content removed, plugins installed and preferences set.
+
+h3. d) Content reset, plugin installation, custom prefs PLUS presentation import...
+
+# Prepare your pages, styles and forms for import. These must follow a specific naming convention for sed_cleaner to recognise them.
+## Your stylesheets must follow the pattern: _stylename_.*css* where _stylename_ is the name you wish the sheet to appear as inside Textpattern.
+## Your pages must follow the pattern: _pagename_.*page* where _pagename_ is the name of the page in Textpattern.
+## Forms must follow the pattern: _formname_._type_.*form* where _formname_ is the name the form is to have and _formtype_ is either _article_, _link_, _comment_, _file_ or _misc_.
+# Upload them to the site's @files@ directory (via the Textpattern interface, ftp, scp, sshfs or other mechanism.)
+# Now proceed with the steps in c) above.
 
 
 h2. The cleanups.php file.
@@ -92,7 +101,7 @@ h3. Command descriptions...
 |^. @EnablePlugin@ |^. Enables the named plugin (if installed) |^. The plugin to be enabled. |^. @'EnablePlugin smd_admin_themes'@ |
 |^. @DisablePlugin@ |^. Disables the named plugin (if installed) |^. The plugin to be disabled. |^. @'DisablePlugin smd_admin_themes'@ |
 |^. @RemoveSection@ |^. Remove a section from the site. |^. The name (not the title) of the section to be deleted. |^. @RemoveSection@ |
-|^. @AddSection@ |^. Adds a section to the site. |^. The _title_ of the section to be deleted. The name will be infered from this. |^. @AddSection@ |
+|^. @AddSection@ |^. Adds a section to the site. |^. The _title_ of the section to be deleted. The name will be infered from this. Optionally, the _page_ to use, the _style_ to use, appear in _rss_ (0 or 1), on _frontpage_ (0 or 1) and _searchable_ (0 or 1) |^. @AddSection About single about 0 1 1@ Adds a section titled 'About' using page _single_, style _about_, not in _rss_ feed, on the _frontpage_ and _searchable_. |
 |^. @RemovePage@ |^. Remove a page from the site. |^. The name of the page to be removed. |^. @RemovePage@ |
 |^. @BlankPage@ |^. Remove the content of a page (or set the default page to placeholder) |^. The name of the page to be blanked. |^. @BlankPage@ |
 |^. @BlankCSS@ |^. Remove the content of a stylesheet. |^. The name of the stylesheet to blank. |^. @BlankCSS default@ |

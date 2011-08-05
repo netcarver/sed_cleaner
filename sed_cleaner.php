@@ -1,7 +1,7 @@
 <?php
 
 $plugin['name'] = 'sed_cleaner';
-$plugin['version'] = '0.5';
+$plugin['version'] = '0.6';
 $plugin['author'] = 'Netcarver';
 $plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
@@ -45,7 +45,7 @@ if( @txpinterface === 'admin' )
 
 
 	#
-	#	Try to auto-install any plugin files found in the files directory...
+	#	identify installable files found in the files/ directory...
 	#
 	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
 	$files = array();
@@ -60,27 +60,48 @@ if( @txpinterface === 'admin' )
 	{
 		while( $file = $dir->read() )
 		{
-			if( $file[0] !=='.' && $file !== 'cleanups.php' )
+			$parts = pathinfo($file);
+			$fileaddr = $path.DS.$file;
+			if( !is_dir($fileaddr) )
 			{
 				if( $debug ) echo br , "... found ($file)";
-				$fileaddr = $path.DS.$file;
-				if( !is_dir($fileaddr) )
+				switch( @$parts['extension'] )
 				{
-					$files[] = $file;
-					if( $debug ) echo " : accepting as a candidate plugin file.";
+					case 'plugin' :
+						$files['plugins'][] = $file;
+						if( $debug ) echo " : accepting as a candidate plugin file.";
+						break;
+					case 'css' :
+						$files['css'][] = $file;
+						if( $debug ) echo " : accepting as a candidate CSS file.";
+						break;
+					case 'page' :
+						$files['page'][] = $file;
+						if( $debug ) echo " : accepting as a candidate Txp page file.";
+						break;
+					case 'form' :
+						$files['form'][] = $file;
+						if( $debug ) echo " : accepting as a candidate Txp form file.";
+						break;
+					default:
+						break;
 				}
 			}
 		}
 	}
 	$dir->close();
 
-	if( empty( $files ) )
+
+	#
+	#	Try to auto-install any plugin files found in the files directory...
+	#
+	if( empty( $files['plugins'] ) )
 	{
 		if( $debug ) echo " no plugin candidate files found.";
 	}
 	else
 	{
-		foreach( $files as $file )
+		foreach( $files['plugins'] as $file )
 		{
 			if( $debug ) echo br , "Processing $file : ";
 			#
@@ -93,6 +114,74 @@ if( @txpinterface === 'admin' )
 			plugin_install();
 		}
 	}
+
+
+	#
+	#	Try to install any CSS files found...
+	#
+	if( empty( $files['css'] ) )
+	{
+		if( $debug ) echo " no CSS candidates found.";
+	}
+	else
+	{
+		foreach( $files['css'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$name = doSlash( $parts['filename'] );
+			safe_upsert( 'txp_css', "`css`='$content'", "`name`='$name'" , $debug );
+		}
+	}
+
+
+	#
+	#	Try to install any page files found...
+	#
+	if( empty( $files['page'] ) )
+	{
+		if( $debug ) echo " no page candidates found.";
+	}
+	else
+	{
+		foreach( $files['page'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$name = doSlash( $parts['filename'] );
+			safe_upsert( 'txp_page', "`user_html`='$content'", "`name`='$name'" , $debug );
+		}
+	}
+
+
+	#
+	#	Try to install any form files found...
+	#
+	#	Filename format = name.type.form
+	#	where type is one of { article, link, file, comment, misc }
+	#
+	if( empty( $files['form'] ) )
+	{
+		if( $debug ) echo " no form candidates found.";
+	}
+	else
+	{
+		foreach( $files['form'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$tmp = explode( '.', $parts['filename'] );
+			$type = doSlash( array_pop($tmp) );
+			$name = doSlash( implode( '.', $tmp ) );
+
+			echo br, "Found form $name of type $type.";
+			safe_upsert( 'txp_form', "`Form`='$content', `type`='$type'", "`name`='$name'" , $debug );
+		}
+	}
+
 
 	#
 	# Process the cleanups.php file...
@@ -149,7 +238,7 @@ if( @txpinterface === 'admin' )
 		#
 		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 		while( @ob_end_clean() );
-		header('Location: '.hu.'textpattern/index.php?event=plugin');
+		header('Location: '.hu.'textpattern/index.php?event=prefs');
 		header('Connection: close');
 		header('Content-Length: 0');
 		exit(0);
@@ -170,17 +259,44 @@ function sed_cleaner_removesection_action( $args, $debug )
 function sed_cleaner_addsection_action( $args, $debug )
 {
 	$section_title = doSlash( array_shift( $args ) );
-	$section_name = strtolower(sanitizeForUrl($section_title));;
+	$section_name = strtolower(sanitizeForUrl($section_title));
+
+	if( !empty( $args ) ) 
+		$page = doSlash( array_shift( $args ) );
+	else
+		$page = $default['page'];
+
+	if( !empty( $args ) ) 
+		$css = doSlash( array_shift( $args ) );
+	else
+		$css = $default['css'];
+
+	if( !empty( $args ) ) 
+		$rss = doSlash( array_shift( $args ) );
+	else
+		$rss = 0;
+
+	if( !empty( $args ) ) 
+		$frontpage = doSlash( array_shift( $args ) );
+	else
+		$frontpage = 0;
+
+	if( !empty( $args ) ) 
+		$searchable = doSlash( array_shift( $args ) );
+	else
+		$searchable = 0;
+
 	$default = doSlash(safe_row('page, css', 'txp_section', "name = 'default'"));
 	if( $debug ) echo " attempting to add a section entitled '$section_title'.";
 	safe_insert( 'txp_section',
 		"`name` = '$section_name',
 		`title` = '$section_title',
-		`page`  = '{$default['page']}',
-		`css`   = '{$default['css']}',
+		`page`  = '$page',
+		`css`   = '$css',
 		`is_default` = 0,
-		`in_rss` = 1,
-		`on_frontpage` = 1",
+		`in_rss` = $rss,
+		`on_frontpage` = $frontpage,
+		`searchable` = $searchable",
 		$debug );
 }
 
@@ -304,6 +420,21 @@ function sed_cleaner_empty_dir($dir, $debug, $exclude_hidden = false)
     }
   }
   reset($objects);
+}
+
+function sed_cleaner_removefile_action( $args, $debug )
+{
+	$filename = array_shift( $args );
+	$whitelist = array( 'license.txt', 'lgpl-2.1.txt', '../HISTORY.txt', '../README.txt' );
+	if( !in_array( $filename, $whitelist ) )
+	{
+		echo "[$filename] is not in the files whitelist.";
+		return;
+	}
+
+	if( $debug ) echo " attempting to remove file [$filename].";
+	if( file_exists( $filename ) )
+		unlink( $filename );
 }
 
 # --- END PLUGIN CODE ---
