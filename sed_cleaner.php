@@ -259,17 +259,44 @@ function sed_cleaner_removesection_action( $args, $debug )
 function sed_cleaner_addsection_action( $args, $debug )
 {
 	$section_title = doSlash( array_shift( $args ) );
-	$section_name = strtolower(sanitizeForUrl($section_title));;
+	$section_name = strtolower(sanitizeForUrl($section_title));
+
+	if( !empty( $args ) ) 
+		$page = doSlash( array_shift( $args ) );
+	else
+		$page = $default['page'];
+
+	if( !empty( $args ) ) 
+		$css = doSlash( array_shift( $args ) );
+	else
+		$css = $default['css'];
+
+	if( !empty( $args ) ) 
+		$rss = doSlash( array_shift( $args ) );
+	else
+		$rss = 0;
+
+	if( !empty( $args ) ) 
+		$frontpage = doSlash( array_shift( $args ) );
+	else
+		$frontpage = 0;
+
+	if( !empty( $args ) ) 
+		$searchable = doSlash( array_shift( $args ) );
+	else
+		$searchable = 0;
+
 	$default = doSlash(safe_row('page, css', 'txp_section', "name = 'default'"));
 	if( $debug ) echo " attempting to add a section entitled '$section_title'.";
 	safe_insert( 'txp_section',
 		"`name` = '$section_name',
 		`title` = '$section_title',
-		`page`  = '{$default['page']}',
-		`css`   = '{$default['css']}',
+		`page`  = '$page',
+		`css`   = '$css',
 		`is_default` = 0,
-		`in_rss` = 1,
-		`on_frontpage` = 1",
+		`in_rss` = $rss,
+		`on_frontpage` = $frontpage,
+		`searchable` = $searchable",
 		$debug );
 }
 
