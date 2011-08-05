@@ -81,7 +81,7 @@ h3. d) Content reset, plugin installation, custom prefs PLUS presentation import
 # Prepare your pages, styles and forms for import. These must follow a specific naming convention for sed_cleaner to recognise them.
 ## Your stylesheets must follow the pattern: _stylename_.*css* where _stylename_ is the name you wish the sheet to appear as inside Textpattern.
 ## Your pages must follow the pattern: _pagename_.*page* where _pagename_ is the name of the page in Textpattern.
-## Forms must follow the pattern: _formname_._type_.*form* where _formname_ is the name the form is to have and _formtype_ is either _article_, _link_, _comment_, _file_ or _misc_.
+## Forms must follow the pattern: [_formname_].[_type_].*form* where _formname_ is the name the form is to have and _formtype_ is either _article_, _link_, _comment_, _file_ or _misc_.
 # Upload them to the site's @files@ directory (via the Textpattern interface, ftp, scp, sshfs or other mechanism.)
 # Now proceed with the steps in c) above.
 
