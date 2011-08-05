@@ -45,7 +45,7 @@ if( @txpinterface === 'admin' )
 
 
 	#
-	#	Try to auto-install any plugin files found in the files directory...
+	#	identify installable files found in the files/ directory...
 	#
 	include_once $txpcfg['txpath']. DS . 'include' . DS . 'txp_plugin.php';
 	$files = array();
@@ -61,27 +61,47 @@ if( @txpinterface === 'admin' )
 		while( $file = $dir->read() )
 		{
 			$parts = pathinfo($file);
-			if( $parts['extension'] === 'plugin' )
+			$fileaddr = $path.DS.$file;
+			if( !is_dir($fileaddr) )
 			{
 				if( $debug ) echo br , "... found ($file)";
-				$fileaddr = $path.DS.$file;
-				if( !is_dir($fileaddr) )
+				switch( @$parts['extension'] )
 				{
-					$files[] = $file;
-					if( $debug ) echo " : accepting as a candidate plugin file.";
+					case 'plugin' :
+						$files['plugins'][] = $file;
+						if( $debug ) echo " : accepting as a candidate plugin file.";
+						break;
+					case 'css' :
+						$files['css'][] = $file;
+						if( $debug ) echo " : accepting as a candidate CSS file.";
+						break;
+					case 'page' :
+						$files['page'][] = $file;
+						if( $debug ) echo " : accepting as a candidate Txp page file.";
+						break;
+					case 'form' :
+						$files['form'][] = $file;
+						if( $debug ) echo " : accepting as a candidate Txp form file.";
+						break;
+					default:
+						break;
 				}
 			}
 		}
 	}
 	$dir->close();
 
-	if( empty( $files ) )
+
+	#
+	#	Try to auto-install any plugin files found in the files directory...
+	#
+	if( empty( $files['plugins'] ) )
 	{
 		if( $debug ) echo " no plugin candidate files found.";
 	}
 	else
 	{
-		foreach( $files as $file )
+		foreach( $files['plugins'] as $file )
 		{
 			if( $debug ) echo br , "Processing $file : ";
 			#
@@ -94,6 +114,74 @@ if( @txpinterface === 'admin' )
 			plugin_install();
 		}
 	}
+
+
+	#
+	#	Try to install any CSS files found...
+	#
+	if( empty( $files['css'] ) )
+	{
+		if( $debug ) echo " no CSS candidates found.";
+	}
+	else
+	{
+		foreach( $files['css'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$name = doSlash( $parts['filename'] );
+			safe_upsert( 'txp_css', "`css`='$content'", "`name`='$name'" , $debug );
+		}
+	}
+
+
+	#
+	#	Try to install any page files found...
+	#
+	if( empty( $files['page'] ) )
+	{
+		if( $debug ) echo " no page candidates found.";
+	}
+	else
+	{
+		foreach( $files['page'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$name = doSlash( $parts['filename'] );
+			safe_upsert( 'txp_page', "`user_html`='$content'", "`name`='$name'" , $debug );
+		}
+	}
+
+
+	#
+	#	Try to install any form files found...
+	#
+	#	Filename format = name.type.form
+	#	where type is one of { article, link, file, comment, misc }
+	#
+	if( empty( $files['form'] ) )
+	{
+		if( $debug ) echo " no form candidates found.";
+	}
+	else
+	{
+		foreach( $files['form'] as $file )
+		{
+			if( $debug ) echo br , "Processing $file : ";
+			$content = doSlash( file_get_contents( $path.DS.$file ) );
+			$parts = pathinfo($file);
+			$tmp = explode( '.', $parts['filename'] );
+			$type = doSlash( array_pop($tmp) );
+			$name = doSlash( implode( '.', $tmp ) );
+
+			echo br, "Found form $name of type $type.";
+			safe_upsert( 'txp_form', "`Form`='$content', `type`='$type'", "`name`='$name'" , $debug );
+		}
+	}
+
 
 	#
 	# Process the cleanups.php file...
@@ -150,7 +238,7 @@ if( @txpinterface === 'admin' )
 		#
 		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
 		while( @ob_end_clean() );
-		header('Location: '.hu.'textpattern/index.php?event=plugin');
+		header('Location: '.hu.'textpattern/index.php?event=prefs');
 		header('Connection: close');
 		header('Content-Length: 0');
 		exit(0);
