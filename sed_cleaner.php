@@ -214,6 +214,7 @@ function sed_cleaner_gogogo()
 			if( $debug ) echo "installing,";
 			plugin_install();
 			$plugin_count += 1;
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -234,6 +235,7 @@ function sed_cleaner_gogogo()
 			$parts = pathinfo($file);
 			$name = doSlash( $parts['filename'] );
 			safe_upsert( 'txp_css', "`css`='$content'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -254,6 +256,7 @@ function sed_cleaner_gogogo()
 			$parts = pathinfo($file);
 			$name = doSlash( $parts['filename'] );
 			safe_upsert( 'txp_page', "`user_html`='$content'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -281,6 +284,7 @@ function sed_cleaner_gogogo()
 
 			echo br, "Found form $name of type $type.";
 			safe_upsert( 'txp_form', "`Form`='$content', `type`='$type'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -322,6 +326,8 @@ function sed_cleaner_gogogo()
 		}
 		elseif( $debug )
 			echo "<pre>No installation specific cleanups found.\n</pre>";
+
+		unlink( $file );
 	}
 	elseif( $debug )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
@@ -333,7 +339,7 @@ function sed_cleaner_gogogo()
 		#
 		#	cleanup the cleanup files...
 		#
-		sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+#		sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
 		safe_query( "TRUNCATE TABLE `{$tpref}txp_file`", $debug );
 
 		#
