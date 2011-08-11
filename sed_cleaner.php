@@ -195,12 +195,14 @@ function sed_cleaner_gogogo()
 	#
 	#	Try to auto-install any plugin files found in the files directory...
 	#
+	$plugin_count = 0;
 	if( empty( $files['plugins'] ) )
 	{
 		if( $debug ) echo " no plugin candidate files found.";
 	}
 	else
 	{
+		include_once $txpcfg['txpath'].'/lib/txplib_head.php';
 		foreach( $files['plugins'] as $file )
 		{
 			if( $debug ) echo br , "Processing $file : ";
@@ -210,8 +212,8 @@ function sed_cleaner_gogogo()
 			$plugin = join( '', file($path.DS.$file) );
 			$_POST['plugin64'] = $plugin;
 			if( $debug ) echo "installing,";
-			include_once $txpcfg['txpath'].'/lib/txplib_head.php';
 			plugin_install();
+			$plugin_count += 1;
 		}
 	}
 
@@ -338,10 +340,13 @@ function sed_cleaner_gogogo()
 		# Finally, we self-destruct unless debugging and redirect to the plugins tab...
 		#
 		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
-//		while( @ob_end_clean() );
-//		header('Location: '.hu.'textpattern/index.php?event=prefs');
-//		header('Connection: close');
-//		header('Content-Length: 0');
+		if( $plugin_count )
+		{
+			while( @ob_end_clean() );
+			header('Location: '.hu.'textpattern/index.php?event=prefs');
+			header('Connection: close');
+			header('Content-Length: 0');
+		}
 		exit(0);
 	}
 }
