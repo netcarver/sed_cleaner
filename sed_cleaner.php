@@ -7,18 +7,118 @@ $plugin['author_uri'] = 'https://github.com/netcarver/sed_cleaner';
 $plugin['description'] = 'Does a little house cleaning on new installs.';
 $plugin['type'] = '3';
 $plugin['order'] = 1;
+$plugin['flags'] = 2;
 
 @include_once('../zem_tpl.php');
 
 # --- BEGIN PLUGIN CODE ---
 
+global $event;
+
 if( @txpinterface === 'admin' )
 {
-	global $prefs, $txpcfg;
+	register_callback('sed_cleaner_installed', 'plugin_lifecycle.sed_cleaner', 'installed' );
+}
+
+
+#
+#	Installation handler...
+#
+function sed_cleaner_installed( $evt, $stp )
+{
+	echo<<<HTML
+<html>
+<head>
+  <title>WARNING: Site content at risk.</title>
+</head>
+<body>
+<div style="text-align: center;">
+	<p><strong>!! sed_cleaner kills ALL site content !!</strong><br />If you enable the sed_cleaner plugin, all your site content will be destoyed.</p>
+	<form action="/textpattern/index.php" method="GET">
+		<input type="hidden" name="event" value="plugin">
+    <input value="Ok" name="sed_cleaner_warning" class="smallerbox" type="submit">
+  </form>
+	<p>Pressing OK will take you to the plugin tab. Mission options...</p>
+  <ol>
+	  <li><em>DELETE</em> the plugin to neutralise the threat to your content.</li>
+		<li><em>ENABLE</em> the plugin to clean your site.</li>
+    <li>Leave it <em>DISABLED</em> to do nothing.</li>
+	</ol>
+</div>
+</body>
+</html>
+HTML;
+  exit(0);
+}
+
+function sed_cleaner_lastchance( $count )
+{
+	global $event, $step;
+	echo<<<HTML
+<html>
+<head>
+  <title>WARNING: Site content at risk.</title>
+</head>
+<body>
+	<div style="text-align: center;">
+	<p>Confirm removal of $count articles and all associated content.</p>
+  <form>
+		<input type="hidden" name="event" value="{$event}">
+		<input type="hidden" name="step" value="{$step}">
+    <input value="Ok" name="sed_cleaner_confirmation" class="smallerbox" type="submit">
+		<input value="Cancel" name="sed_cleaner_confirmation" class="smallerbox" type="submit">
+		<ol>
+			<li>Pressing Ok will REMOVE ALL CONTENT.</li>
+			<li>Pressing Cancel will disable sed_cleaner, saving your content.</li>
+		</ol>
+  </form>
+  </div>
+</body>
+</html>
+HTML;
+  exit(0);
+}
+
+function sed_cleaner_done()
+{
+	global $txpcfg;
+	include_once $txpcfg['txpath']. DS . 'lib' . DS . 'txplib_head.php';
+	echo pagetop('');
+	echo<<<HTML
+<body>
+  <p style="text-align: center">sed_cleaner all done. Self terminating.</p>
+</body>
+</html>
+HTML;
+}
+
+if( @txpinterface === 'admin' && $event !== 'plugin' ) # Should only happen if plugin enabled.
+{
+	$count = safe_count( 'textpattern', '1=1' );
+	if( $count == 1 )
+		sed_cleaner_gogogo();	# Only one article => a fresh install?
+	else
+	{
+		#
+		#	Confirm removal...
+		#
+		$remove = gps( 'sed_cleaner_confirmation' );
+		if( $remove === 'Ok' )
+			sed_cleaner_gogogo();		# Pressing OK kills content
+		elseif( $remove === 'Cancel' )	
+			safe_update( 'txp_plugin', "`status`='0'", "`name`='sed_cleaner'" );	# Cancelling disables plugin
+		else
+			sed_cleaner_lastchance( $count );	# Display last chance page
+	}
+}
+
+function sed_cleaner_gogogo()
+{
+	global $event, $prefs, $txpcfg;
 	$files_path = $prefs['file_base_path'];
 	$tpref = $txpcfg['table_prefix'];
 	$debug = 0;
-
+	
 	#
 	#	Remove default content...
 	#
@@ -95,12 +195,14 @@ if( @txpinterface === 'admin' )
 	#
 	#	Try to auto-install any plugin files found in the files directory...
 	#
+	$plugin_count = 0;
 	if( empty( $files['plugins'] ) )
 	{
 		if( $debug ) echo " no plugin candidate files found.";
 	}
 	else
 	{
+		include_once $txpcfg['txpath'].'/lib/txplib_head.php';
 		foreach( $files['plugins'] as $file )
 		{
 			if( $debug ) echo br , "Processing $file : ";
@@ -110,8 +212,9 @@ if( @txpinterface === 'admin' )
 			$plugin = join( '', file($path.DS.$file) );
 			$_POST['plugin64'] = $plugin;
 			if( $debug ) echo "installing,";
-			include_once $txpcfg['txpath'].'/lib/txplib_head.php';
 			plugin_install();
+			$plugin_count += 1;
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -132,6 +235,7 @@ if( @txpinterface === 'admin' )
 			$parts = pathinfo($file);
 			$name = doSlash( $parts['filename'] );
 			safe_upsert( 'txp_css', "`css`='$content'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -152,6 +256,7 @@ if( @txpinterface === 'admin' )
 			$parts = pathinfo($file);
 			$name = doSlash( $parts['filename'] );
 			safe_upsert( 'txp_page', "`user_html`='$content'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -179,6 +284,7 @@ if( @txpinterface === 'admin' )
 
 			echo br, "Found form $name of type $type.";
 			safe_upsert( 'txp_form', "`Form`='$content', `type`='$type'", "`name`='$name'" , $debug );
+			unlink( $path.DS.$file );
 		}
 	}
 
@@ -220,35 +326,42 @@ if( @txpinterface === 'admin' )
 		}
 		elseif( $debug )
 			echo "<pre>No installation specific cleanups found.\n</pre>";
+
+		unlink( $file );
 	}
 	elseif( $debug )
 		echo "<pre>No installation specific cleanup file found.\n</pre>";
 
+	sed_cleaner_done();
 
 	if( !$debug )
 	{
 		#
 		#	cleanup the cleanup files...
 		#
-		sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
+#		sed_cleaner_empty_dir( $prefs['file_base_path'], $debug, true );	# exclude hiddens!
 		safe_query( "TRUNCATE TABLE `{$tpref}txp_file`", $debug );
 
 		#
 		# Finally, we self-destruct unless debugging and redirect to the plugins tab...
 		#
 		safe_delete( 'txp_plugin', "`name`='sed_cleaner'", $debug );
-		while( @ob_end_clean() );
-		header('Location: '.hu.'textpattern/index.php?event=prefs');
-		header('Connection: close');
-		header('Content-Length: 0');
+		if( $plugin_count )
+		{
+			while( @ob_end_clean() );
+			header('Location: '.hu.'textpattern/index.php?event=prefs');
+			header('Connection: close');
+			header('Content-Length: 0');
+		}
 		exit(0);
 	}
 }
 
+
+
 #
 #   Action handlers for the cleanups.php script follow...
 #
-
 function sed_cleaner_removesection_action( $args, $debug )
 {
 	$section_name = doSlash( array_shift( $args ) );
