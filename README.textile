@@ -52,7 +52,7 @@ h2. Usage & Installation.
 
 h3. a) Basic content reset...
 
-# Either compile the plugin or "download it.":https://gist.github.com/1114938
+# Either compile the plugin or "download it.":https://gist.github.com/1140873
 # In your new installation, go to @admin > plugins@ and upload the plugin
 # Enable the plugin
 # Navigate to any other admin side tab.
