@@ -63,7 +63,6 @@ h3. a) Basic content reset...
 
 Your site should now have all its content removed and the sed_cleaner plugin will no longer be installed.
 
-There is also a "short Ogg video(Video and commentary on the basic features of sed_cleaner.)":http://txp-plugins.netcarving.com/file_download/121/sed_cleaner.basic.ogv about the basic features.
 
 h3. b) Content reset PLUS automatic plugin installation...
 
