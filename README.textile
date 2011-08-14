@@ -21,7 +21,7 @@ When enabled, this plugin will terminate the following with extreme prejudice...
 * Images
 * Categories (of all types)
 * Articles
-* Files
+* Any files it loads as part of its advanced features
 * Any additional table's content you've scripted in your optional @cleanups.php@ file.
 
 *Do not use this plugin in existing installations with any content you wish to keep.*
@@ -63,6 +63,7 @@ h3. a) Basic content reset...
 
 Your site should now have all its content removed and the sed_cleaner plugin will no longer be installed.
 
+There is also a "short Ogg video(Video and commentary on the basic features of sed_cleaner.)":http://txp-plugins.netcarving.com/file_download/121/sed_cleaner.basic.ogv about the basic features.
 
 h3. b) Content reset PLUS automatic plugin installation...
 
