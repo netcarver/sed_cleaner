@@ -2,6 +2,9 @@ h1. sed_cleaner
 
 A plugin for "Textpattern":http://textpattern.com.
 
+h2. Download Location
+
+You can download the latest compiled plugins from "https://gist.github.com/1140873":https://gist.github.com/1140873
 
 h2. Description.
 
@@ -39,7 +42,7 @@ h2. Filesystem Targets.
 Where filesystem permissions allow, the plugin will...
 
 * Remove the setup directory
-* Remove the contents of the @files@ directory (in case you used a cleanups file or autoloaded plugins -- see later)
+* Remove the contents that it loads from the @files@ directory (in case you used a cleanups file or autoloaded plugins -- see later.) It does not remove the other files (if any) from that directory unless your @cleanups.php@ file instructs it to.
 * Any directory you've scripted in your optional @cleanups.php@ file
 
 
@@ -52,10 +55,11 @@ h2. Usage & Installation.
 
 h3. a) Basic content reset...
 
-# Either compile the plugin or "download it.":https://gist.github.com/1140873
-# In your new installation, go to @admin > plugins@ and upload the plugin
-# Enable the plugin
-# Navigate to any other admin side tab.
+# Either compile the plugin or download the latest compiled version.
+# In your new installation, go to @admin > plugins@ and upload the plugin.
+# Read the message that appears upon installation then click "Ok".
+# If you now Enable the plugin it will be live and ready to go. *This can delete ALL your content.*
+# Navigate to any other admin side tab to activate the plugin.
 
 Your site should now have all its content removed and the sed_cleaner plugin will no longer be installed.
 
