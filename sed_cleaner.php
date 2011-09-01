@@ -29,26 +29,34 @@ function sed_cleaner_installed( $evt, $stp )
 	echo<<<HTML
 <html>
 <head>
-  <title>WARNING: Site content at risk.</title>
+	<title>WARNING: Site content at risk.</title>
+	<link href="theme/classic/textpattern.css" rel="stylesheet" type="text/css" />
+	<style type="text/css">
+		div { width:40em; margin:4em auto; padding:2em 2em 1em; border:0.1em solid #ccc; text-align:center }
+		ul { margin:0 0 2em; list-style:none }
+		li { margin:0 0 0.5em 0 }
+	</style>
 </head>
 <body>
-<div style="text-align: center;">
-	<p><strong>!! sed_cleaner kills ALL site content !!</strong><br />If you enable the sed_cleaner plugin, all your site content will be destoyed.</p>
-	<form action="/textpattern/index.php" method="GET">
-		<input type="hidden" name="event" value="plugin">
-    <input value="Ok" name="sed_cleaner_warning" class="smallerbox" type="submit">
-  </form>
-	<p>Pressing OK will take you to the plugin tab. Mission options...</p>
-  <ol>
-	  <li><em>DELETE</em> the plugin to neutralise the threat to your content.</li>
-		<li><em>ENABLE</em> the plugin to clean your site.</li>
-    <li>Leave it <em>DISABLED</em> to do nothing.</li>
-	</ol>
-</div>
+	<div>
+		<h1>** WARNING: <em>sed_cleaner deletes ALL site content</em> **</h1>
+		<p>If you make the sed_cleaner plugin <strong>ACTIVE</strong> (at any time), all your site content will be destroyed.</p>
+		<p>Clicking <strong>OK</strong> will take you back to the TXP Plugins tab.</p>
+		<p><em>Decide what you want to do when you get there:</em></p>
+		<ul>
+			<li>Make the plugin <strong>ACTIVE</strong> to clean your site</li>
+			<li>OR <strong>DELETE</strong> the plugin to prevent any future threat to your content</li>
+			<li>OR leave the plugin <strong>INACTIVE</strong> to do nothing now</li>
+		</ul>
+		<form action="index.php" method="GET">
+			<input type="hidden" name="event" value="plugin">
+			<input value="OK" name="sed_cleaner_warning" class="publish" type="submit">
+		</form>
+	</div>
 </body>
 </html>
 HTML;
-  exit(0);
+	exit(0);
 }
 
 function sed_cleaner_lastchance( $count )
@@ -57,22 +65,28 @@ function sed_cleaner_lastchance( $count )
 	echo<<<HTML
 <html>
 <head>
-  <title>WARNING: Site content at risk.</title>
+	<title>WARNING: Site content at risk.</title>
+	<link href="theme/classic/textpattern.css" rel="stylesheet" type="text/css" />
+	<style type="text/css">
+		div { width:40em; margin:4em auto; padding:2em 2em 1em; border:0.1em solid #ccc; text-align:center }
+		ul { margin:0 0 2em; list-style:none }
+		li { margin:0 0 0.5em 0 }
+	</style>
 </head>
 <body>
 	<div style="text-align: center;">
 	<p>Confirm removal of $count articles and all associated content.</p>
-  <form>
+	<form>
 		<input type="hidden" name="event" value="{$event}">
-		<input type="hidden" name="step" value="{$step}">
-    <input value="Ok" name="sed_cleaner_confirmation" class="smallerbox" type="submit">
-		<input value="Cancel" name="sed_cleaner_confirmation" class="smallerbox" type="submit">
-		<ol>
-			<li>Pressing Ok will REMOVE ALL CONTENT.</li>
-			<li>Pressing Cancel will disable sed_cleaner, saving your content.</li>
-		</ol>
-  </form>
-  </div>
+		<input type="hidden" name="step"  value="{$step}">
+		<input value="Ok"     name="sed_cleaner_confirmation" class="publish" type="submit">
+		<input value="Cancel" name="sed_cleaner_confirmation" class="publish" type="submit">
+		<ul>
+			<li>Pressing <strong>Ok</strong> will REMOVE ALL CONTENT.</li>
+			<li>Pressing <strong>Cancel</strong> will disable sed_cleaner, saving your content.</li>
+		</ul>
+	</form>
+	</div>
 </body>
 </html>
 HTML;
