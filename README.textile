@@ -11,7 +11,7 @@ h2. Description.
 Designed to do a little cleanup in *new* textpattern installations. Note the *new* in that statement.
 It can also automatically install plugins that you might have included in your installation's @files@ directory.
 
-There are Ogg Vorbis videos (with rough sound) of "Basic":http://txp-plugins.netcarving.com/file_download/123/sed_cleaner.basic.ogv and "Advanced":http://txp-plugins.netcarving.com/file_download/122/sed_cleaner.advanced.ogv uses of this plugin.
+There are Ogg Vorbis videos (with rough sound) of "Basic":http://txp-plugins.netcarving.com/files/sed_cleaner.basic.ogv and "Advanced":http://txp-plugins.netcarving.com/files/sed_cleaner.advanced.ogv uses of this plugin.
 
 h2. Primary Targets.
 
